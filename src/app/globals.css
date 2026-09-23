@@ -1,26 +1,193 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-cream: #f6f1e9;
+  --color-cream-2: #efe7db;
+  --color-sand: #e5d9c8;
+  --color-stone: #cfc1ac;
+  --color-gold: #c9a24e;
+  --color-gold-2: #a6812c;
+  --color-ink: #231f1a;
+  --color-ink-2: #3e3731;
+  --color-muted: #7b7168;
+  --color-line: rgb(35 31 26 / 0.12);
+
+  --font-display: var(--font-serif), Georgia, serif;
+  --font-sans: var(--font-sans-body), system-ui, sans-serif;
+
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scroll-behavior: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.lenis,
+html.lenis body {
+  height: auto;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-variant-numeric: lining-nums;
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: #fff;
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[1480px] px-5 md:px-10 lg:px-16;
+  }
+
+  .eyebrow {
+    @apply font-sans text-[11px] font-semibold uppercase tracking-[0.28em] text-gold-2;
+  }
+
+  .font-display,
+  .display {
+    font-variant-numeric: lining-nums proportional-nums;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+
+  .display em {
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--color-gold-2);
+  }
+
+  /* animated liquid-gold text */
+  .text-shimmer {
+    background: linear-gradient(100deg, #6f4a12 0%, #a87b25 20%, #e2bf6a 36%, #9c7021 52%, #6f4a12 70%, #b8892f 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    text-shadow: none !important;
+    animation: shimmer 6s ease-in-out infinite;
+  }
+
+  /* cursor-follow spotlight used on cards (see useSpotlight) */
+  .spotlight {
+    --mx: 50%;
+    --my: 50%;
+  }
+  .spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-expo);
+    background: radial-gradient(420px circle at var(--mx) var(--my), rgb(201 162 78 / 0.22), transparent 55%);
+  }
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+
+  .lead {
+    @apply text-[17px] leading-[1.7] text-ink-2 md:text-lg;
+  }
+
+  .link-line {
+    position: relative;
+  }
+  .link-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.6s var(--ease-expo);
+  }
+  .link-line:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .grain {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    opacity: 0.045;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .split-line {
+    will-change: transform;
+  }
+
+  .marquee-track {
+    animation: marquee var(--marquee-duration, 40s) linear infinite;
+  }
+  .marquee-track.reverse {
+    animation-direction: reverse;
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  .spin-slow {
+    animation: spin 18s linear infinite;
+  }
+
+  .stepper-btn {
+    @apply flex h-10 w-10 items-center justify-center text-ink transition-colors hover:bg-ink hover:text-cream;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-ink/15 bg-white/60 px-4 py-3.5 text-[15px] text-ink outline-none transition-[border-color,box-shadow] duration-300 placeholder:text-muted/70 focus:border-gold focus:shadow-[0_0_0_3px_rgb(201_162_78_/_0.18)];
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .spin-slow,
+  .text-shimmer {
+    animation: none;
+  }
 }
